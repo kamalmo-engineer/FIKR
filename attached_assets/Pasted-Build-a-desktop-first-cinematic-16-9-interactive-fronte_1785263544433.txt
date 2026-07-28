@@ -1,0 +1,24 @@
+Build a desktop-first, cinematic 16:9 interactive frontend prototype for "FIKR" (a gamified financial literacy platform for kids and parents).
+
+This is a FAKE-DOOR PLAYABLE MVP to showcase to judges. Do NOT create backend, auth, database, or heavy 3D engines. Use pure React + TypeScript + Tailwind CSS + Framer Motion.
+
+Visual & Theme Direction:
+1. Kids World: Pixar/Disney 3D-lite feel, warm sunset lighting, soft shadows, rounded borders, playful vibe.
+2. Parent Dashboard: Apple Vision Pro style (Glassmorphism, backdrop-blur, dark/clean sleek design, premium widgets).
+
+User Flow & Scenes (Manage via State Switcher or Demo Navigation Bar):
+- Scene 1: Landing / Hook (Hero scene with FIKR Logo, "Think Better. Decide Better. Build Better Futures.", and a "Start Journey" button with glow effect).
+- Scene 2: Younis Intro (Introduce 'Younis', Level 2 Explorer, goal: Buy Dream Red Scooter).
+- Scene 3: Street Hub / Island Map (Interactive 16:9 view with hotspots: Toy Shop, Bank, Parent Center, FIKR Mart).
+- Scene 4: Challenge Overlay (Younis at Toy Shop looking at Red Scooter costing 1250 coins. Option A: Buy Now. Option B: Save & Wait for Reward).
+- Scene 5: Decision / Freeze & Reward Modal (Trigger "Mission Complete!", +120 XP, +50 Coins, "Smart Decision" Badge popup with celebration animation).
+- Scene 6: Parent Dashboard (Glassmorphism Family Intelligence Center featuring AI Coach analysis, Decision Tree growth status, Quick Stats, and Skills Radar/Progress).
+- Scene 7: Closing / End Card (FIKR logo, Tagline, and CTA to return to main demo).
+
+Key Technical Requirements:
+- Strictly forced 16:9 aspect ratio container centered on screen with cinematic borders.
+- Top Demo Bar with direct scene navigation buttons: [Landing] [Intro] [Street] [Challenge] [Reward] [Parent Dashboard].
+- Smooth scene transitions using Framer Motion (fade, subtle scale/zoom, parallax).
+- Mock Data state holding Younis's coins, XP, progress %, and decision history.
+
+Start by setting up the project layout, Tailwind CSS glassmorphism styles, Framer Motion transitions, and the main Scene Controller.
