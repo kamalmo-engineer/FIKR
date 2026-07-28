@@ -1,153 +1,165 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Target, Coins, Zap } from 'lucide-react';
 import { YounisState } from '@/lib/mock-data';
-import younisAvatarPath from '@assets/generated_images/younis-avatar.png';
 
 interface IntroSceneProps {
   younis: YounisState;
   onNext: () => void;
 }
 
+const ageGroups = ['6–8', '9–12', '13–18'];
+const dreamIcons = [
+  { label: 'Scooter', emoji: '🛴' },
+  { label: 'Gadget',  emoji: '📱' },
+  { label: 'Travel',  emoji: '✈️' },
+  { label: 'Books',   emoji: '📚' },
+];
+
 export function IntroScene({ younis, onNext }: IntroSceneProps) {
-  const xpPercent = (younis.xp / younis.maxXP) * 100;
+  const [selectedAge, setSelectedAge] = useState('9–12');
+  const [selectedDream, setSelectedDream] = useState('Scooter');
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 overflow-hidden">
-      {/* Decorative Background Circles */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-orange-200/40 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-200/40 rounded-full blur-3xl" />
+    <div className="relative w-full h-full overflow-hidden">
+      {/* Background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url('/younis-intro.jpg')` }}
+      />
+      {/* Dark overlay so cards remain readable */}
+      <div className="absolute inset-0 bg-black/45 backdrop-blur-[1px]" />
 
-      <div className="relative z-10 flex flex-col items-center justify-center h-full px-12">
+      {/* Content */}
+      <div className="relative z-10 flex items-center justify-center h-full px-8">
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
+          className="w-full max-w-2xl"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="max-w-2xl w-full"
         >
           {/* Header */}
           <motion.h2
-            className="text-4xl font-black text-center mb-8 text-orange-900"
-            style={{ fontFamily: 'var(--font-display)' }}
+            className="text-4xl font-black text-center text-white mb-6"
+            style={{ textShadow: '0 2px 16px rgba(0,0,0,0.6)' }}
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            Meet {younis.name}
+            Welcome, Explorer! 👋
           </motion.h2>
 
-          {/* Character Card */}
-          <motion.div
-            className="bg-white rounded-3xl shadow-2xl p-8 border-4 border-orange-200"
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-          >
-            {/* Avatar and Level */}
-            <div className="flex items-center gap-6 mb-6">
-              <div className="relative">
-                <img 
-                  src={younisAvatarPath} 
-                  alt="Younis"
-                  className="w-32 h-32 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-200 object-cover"
-                />
-                <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
-                  Lv {younis.level}
-                </div>
-              </div>
-              
-              <div className="flex-1">
-                <h3 className="text-3xl font-black text-gray-900 mb-1" style={{ fontFamily: 'var(--font-display)' }}>
-                  {younis.name}
-                </h3>
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full">
-                  <Zap className="w-4 h-4 text-purple-600" />
-                  <span className="text-sm font-bold text-purple-900" style={{ fontFamily: 'var(--font-display)' }}>
-                    {younis.title}
-                  </span>
-                </div>
+          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-7 shadow-2xl space-y-6">
+            {/* Age Group */}
+            <div>
+              <p className="text-sm font-bold text-white/70 uppercase tracking-widest mb-3">
+                Age Group
+              </p>
+              <div className="flex gap-3">
+                {ageGroups.map((age) => (
+                  <button
+                    key={age}
+                    onClick={() => setSelectedAge(age)}
+                    className="flex-1 py-3 rounded-2xl font-black text-lg transition-all duration-200"
+                    style={{
+                      background: selectedAge === age
+                        ? 'linear-gradient(135deg, #f97316, #fbbf24)'
+                        : 'rgba(255,255,255,0.1)',
+                      color: selectedAge === age ? '#fff' : 'rgba(255,255,255,0.6)',
+                      border: selectedAge === age ? 'none' : '1px solid rgba(255,255,255,0.15)',
+                      boxShadow: selectedAge === age ? '0 0 20px rgba(249,115,22,0.5)' : 'none',
+                    }}
+                  >
+                    {age}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              {/* Coins */}
-              <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl p-4 border-2 border-amber-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <Coins className="w-5 h-5 text-amber-600" />
-                  <span className="text-sm font-bold text-amber-900" style={{ fontFamily: 'var(--font-display)' }}>
-                    Coins
-                  </span>
-                </div>
-                <div className="text-3xl font-black text-amber-700" style={{ fontFamily: 'var(--font-display)' }}>
-                  {younis.coins}
-                </div>
+            {/* Dream Icons */}
+            <div>
+              <p className="text-sm font-bold text-white/70 uppercase tracking-widest mb-3">
+                My Dream
+              </p>
+              <div className="flex gap-3">
+                {dreamIcons.map(({ label, emoji }) => (
+                  <button
+                    key={label}
+                    onClick={() => setSelectedDream(label)}
+                    className="flex-1 flex flex-col items-center py-3 rounded-2xl transition-all duration-200"
+                    style={{
+                      background: selectedDream === label
+                        ? 'linear-gradient(135deg, rgba(251,191,36,0.4), rgba(249,115,22,0.4))'
+                        : 'rgba(255,255,255,0.08)',
+                      border: selectedDream === label
+                        ? '1.5px solid rgba(251,191,36,0.7)'
+                        : '1px solid rgba(255,255,255,0.12)',
+                    }}
+                  >
+                    <span className="text-2xl mb-1">{emoji}</span>
+                    <span className="text-xs font-bold text-white/80">{label}</span>
+                  </button>
+                ))}
               </div>
+            </div>
 
-              {/* XP */}
-              <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-4 border-2 border-emerald-200">
-                <div className="flex items-center gap-2 mb-2">
-                  <Zap className="w-5 h-5 text-emerald-600" />
-                  <span className="text-sm font-bold text-emerald-900" style={{ fontFamily: 'var(--font-display)' }}>
-                    Experience
-                  </span>
+            {/* Financial Goal */}
+            <div
+              className="flex items-center gap-4 rounded-2xl px-5 py-4"
+              style={{
+                background: 'linear-gradient(135deg, rgba(251,146,60,0.2), rgba(251,191,36,0.2))',
+                border: '1.5px solid rgba(251,191,36,0.4)',
+              }}
+            >
+              <span className="text-3xl">🛴</span>
+              <div>
+                <p className="text-xs font-bold text-amber-300 uppercase tracking-widest mb-0.5">
+                  Financial Goal
+                </p>
+                <p className="text-lg font-black text-white">Buy My Dream Scooter</p>
+                <p className="text-sm text-white/60">
+                  {younis.coins} / {younis.goalCost} coins saved
+                </p>
+              </div>
+              <div className="ml-auto text-right">
+                <div className="text-2xl font-black text-amber-300">
+                  {Math.round((younis.coins / younis.goalCost) * 100)}%
                 </div>
-                <div className="text-3xl font-black text-emerald-700" style={{ fontFamily: 'var(--font-display)' }}>
-                  {younis.xp}/{younis.maxXP}
-                </div>
-                {/* XP Bar */}
-                <div className="mt-2 h-2 bg-emerald-200 rounded-full overflow-hidden">
+                <div className="w-20 h-2 bg-white/10 rounded-full mt-1 overflow-hidden">
                   <motion.div
-                    className="h-full bg-gradient-to-r from-emerald-500 to-green-500"
+                    className="h-full rounded-full"
+                    style={{ background: 'linear-gradient(90deg, #f97316, #fbbf24)' }}
                     initial={{ width: 0 }}
-                    animate={{ width: `${xpPercent}%` }}
+                    animate={{ width: `${(younis.coins / younis.goalCost) * 100}%` }}
                     transition={{ delay: 0.8, duration: 1, ease: 'easeOut' }}
                   />
                 </div>
               </div>
             </div>
 
-            {/* Goal */}
-            <div className="bg-gradient-to-br from-orange-100 to-red-100 rounded-2xl p-6 border-2 border-orange-300">
-              <div className="flex items-center gap-3 mb-3">
-                <Target className="w-6 h-6 text-orange-600" />
-                <span className="text-lg font-black text-orange-900" style={{ fontFamily: 'var(--font-display)' }}>
-                  Dream Goal
-                </span>
-              </div>
-              <div className="text-2xl font-black text-orange-800 mb-2" style={{ fontFamily: 'var(--font-display)' }}>
-                {younis.goal}
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-bold text-orange-700" style={{ fontFamily: 'var(--font-display)' }}>
-                  Target: {younis.goalCost} coins
-                </span>
-                <span className="font-bold text-orange-600" style={{ fontFamily: 'var(--font-display)' }}>
-                  Need: {younis.goalCost - younis.coins} more
-                </span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* CTA */}
-          <motion.div
-            className="flex justify-center mt-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-          >
-            <button
+            {/* CTA */}
+            <motion.button
               onClick={onNext}
               data-testid="button-begin-adventure"
-              className="group px-10 py-4 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-lg font-bold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
-              style={{ fontFamily: 'var(--font-display)' }}
+              className="w-full py-4 rounded-2xl text-white text-xl font-black relative overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, #f97316, #fbbf24)',
+                boxShadow: '0 0 32px rgba(249,115,22,0.45)',
+              }}
+              whileHover={{ scale: 1.03, boxShadow: '0 0 48px rgba(249,115,22,0.65)' }}
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
             >
-              <span className="flex items-center gap-3">
-                Begin Adventure
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </button>
-          </motion.div>
+              <motion.div
+                className="absolute inset-0 opacity-25"
+                style={{ background: 'linear-gradient(90deg, transparent, white, transparent)' }}
+                animate={{ x: ['-100%', '200%'] }}
+                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.2 }}
+              />
+              <span className="relative z-10">START MY JOURNEY ✨</span>
+            </motion.button>
+          </div>
         </motion.div>
       </div>
     </div>

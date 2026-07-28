@@ -1,126 +1,121 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
-import heroSunsetPath from '@assets/generated_images/hero-sunset.jpg';
 
 interface LandingSceneProps {
   onNext: () => void;
 }
 
-const FloatingParticle = ({ delay }: { delay: number }) => (
+const FloatingParticle = ({ x, y, delay }: { x: number; y: number; delay: number }) => (
   <motion.div
-    className="absolute w-2 h-2 bg-gradient-to-br from-orange-400 to-amber-300 rounded-full opacity-60"
+    className="absolute w-2 h-2 rounded-full"
     style={{
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
+      left: `${x}%`,
+      top: `${y}%`,
+      background: 'radial-gradient(circle, #fbbf24, #f97316)',
     }}
-    animate={{
-      y: [0, -30, 0],
-      opacity: [0.6, 1, 0.6],
-      scale: [1, 1.2, 1],
-    }}
-    transition={{
-      duration: 3 + Math.random() * 2,
-      repeat: Infinity,
-      delay,
-    }}
+    animate={{ y: [0, -28, 0], opacity: [0.5, 1, 0.5], scale: [1, 1.3, 1] }}
+    transition={{ duration: 3.5 + delay * 0.4, repeat: Infinity, delay }}
   />
 );
+
+const particles = Array.from({ length: 18 }, (_, i) => ({
+  x: (i * 37 + 11) % 97,
+  y: (i * 53 + 7) % 90,
+  delay: i * 0.18,
+}));
 
 export function LandingScene({ onNext }: LandingSceneProps) {
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {/* Hero Background */}
-      <div 
+      {/* Real background image */}
+      <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroSunsetPath})` }}
+        style={{ backgroundImage: `url('/landing.jpg')` }}
       />
-      
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-purple-900/30 via-orange-600/20 to-amber-500/30" />
-      
-      {/* Floating Particles */}
-      {Array.from({ length: 20 }).map((_, i) => (
-        <FloatingParticle key={i} delay={i * 0.2} />
-      ))}
+
+      {/* Cinematic vignette */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10" />
+
+      {/* Floating particles */}
+      {particles.map((p, i) => <FloatingParticle key={i} {...p} />)}
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-8">
         <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
+          initial={{ scale: 0.85, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.8, ease: [0.68, -0.55, 0.265, 1.55] }}
+          transition={{ duration: 0.9, ease: [0.68, -0.55, 0.265, 1.55] }}
+          className="flex flex-col items-center"
         >
-          {/* Logo */}
-          <motion.h1 
-            className="text-8xl font-black mb-4 tracking-tight"
-            style={{ 
-              fontFamily: 'var(--font-display)',
-              background: 'linear-gradient(135deg, #fb923c 0%, #fbbf24 50%, #f97316 100%)',
+          {/* FIKR wordmark */}
+          <motion.h1
+            className="text-[7rem] font-black leading-none mb-3 tracking-tight"
+            style={{
+              background: 'linear-gradient(135deg, #fb923c 0%, #fbbf24 45%, #f97316 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              filter: 'drop-shadow(0 4px 20px rgba(251, 146, 60, 0.4))',
+              filter: 'drop-shadow(0 0 30px rgba(251,146,60,0.55))',
             }}
             animate={{
               filter: [
-                'drop-shadow(0 4px 20px rgba(251, 146, 60, 0.4))',
-                'drop-shadow(0 4px 30px rgba(251, 146, 60, 0.6))',
-                'drop-shadow(0 4px 20px rgba(251, 146, 60, 0.4))',
+                'drop-shadow(0 0 24px rgba(251,146,60,0.45))',
+                'drop-shadow(0 0 44px rgba(251,146,60,0.75))',
+                'drop-shadow(0 0 24px rgba(251,146,60,0.45))',
               ],
             }}
-            transition={{ duration: 2, repeat: Infinity }}
+            transition={{ duration: 2.5, repeat: Infinity }}
           >
             FIKR
           </motion.h1>
 
           {/* Tagline */}
           <motion.p
-            className="text-2xl font-bold text-white mb-12 max-w-2xl leading-relaxed"
-            style={{ 
-              fontFamily: 'var(--font-display)',
-              textShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
-            }}
+            className="text-xl font-bold text-white mb-10 max-w-xl leading-relaxed"
+            style={{ textShadow: '0 2px 14px rgba(0,0,0,0.5)' }}
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
+            transition={{ delay: 0.35, duration: 0.7 }}
           >
             Think Better. Decide Better. Build Better Futures.
           </motion.p>
 
-          {/* CTA Button */}
+          {/* CTA */}
           <motion.button
             onClick={onNext}
             data-testid="button-start-journey"
-            className="group relative px-12 py-5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xl font-bold rounded-full overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95"
-            style={{ fontFamily: 'var(--font-display)' }}
+            className="relative px-14 py-4 text-white text-xl font-black rounded-full overflow-hidden"
+            style={{
+              background: 'linear-gradient(135deg, #f97316, #fbbf24)',
+              boxShadow: '0 0 36px rgba(251,146,60,0.5)',
+            }}
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            whileHover={{ boxShadow: '0 0 40px rgba(251, 146, 60, 0.6)' }}
+            transition={{ delay: 0.55, duration: 0.6 }}
+            whileHover={{ scale: 1.07, boxShadow: '0 0 56px rgba(251,146,60,0.75)' }}
+            whileTap={{ scale: 0.96 }}
           >
-            {/* Shimmer Effect */}
-            <div className="absolute inset-0 animate-shimmer" />
-            
-            <span className="relative z-10 flex items-center gap-3">
-              Start Journey
-              <Sparkles className="w-6 h-6" />
+            {/* Shimmer */}
+            <motion.div
+              className="absolute inset-0 opacity-30"
+              style={{ background: 'linear-gradient(90deg, transparent 0%, white 50%, transparent 100%)' }}
+              animate={{ x: ['-100%', '200%'] }}
+              transition={{ duration: 2.2, repeat: Infinity, repeatDelay: 1.5 }}
+            />
+            <span className="relative z-10 flex items-center gap-2">
+              ▶ Start Your Journey
             </span>
-            
-            {/* Pulse Glow */}
-            <div className="absolute inset-0 rounded-full animate-pulse-glow opacity-0 group-hover:opacity-100 transition-opacity" />
           </motion.button>
         </motion.div>
 
-        {/* Bottom Accent */}
-        <motion.div
-          className="absolute bottom-12 text-white/70 text-sm font-medium"
-          style={{ fontFamily: 'var(--font-display)' }}
+        <motion.p
+          className="absolute bottom-8 text-white/60 text-sm font-semibold tracking-wide"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 1 }}
+          transition={{ delay: 1.2 }}
         >
           A financial literacy adventure for the next generation
-        </motion.div>
+        </motion.p>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Award, Coins, Zap, ArrowRight } from 'lucide-react';
+import { Zap, Coins, ArrowRight } from 'lucide-react';
 import { YounisState } from '@/lib/mock-data';
 
 interface RewardSceneProps {
@@ -8,240 +8,157 @@ interface RewardSceneProps {
   onNext: () => void;
 }
 
-const ConfettiPiece = ({ delay, color }: { delay: number; color: string }) => (
+const ConfettiPiece = ({ x, delay, color }: { x: number; delay: number; color: string }) => (
   <motion.div
-    className={`absolute w-3 h-3 ${color}`}
-    style={{
-      left: `${Math.random() * 100}%`,
-      top: '-10%',
-    }}
-    initial={{ y: 0, opacity: 1, rotate: 0 }}
-    animate={{ 
-      y: '120vh', 
-      opacity: 0,
-      rotate: 720,
-    }}
-    transition={{
-      duration: 3 + Math.random() * 2,
-      delay,
-      ease: 'linear',
-    }}
+    className="absolute w-3 h-3 rounded-sm"
+    style={{ left: `${x}%`, top: '-5%', background: color }}
+    initial={{ y: 0, rotate: 0, opacity: 1 }}
+    animate={{ y: '110vh', rotate: 900, opacity: 0 }}
+    transition={{ duration: 3 + Math.random() * 1.5, delay, ease: 'linear' }}
   />
 );
 
+const confettiData = Array.from({ length: 45 }, (_, i) => ({
+  x: (i * 47 + 3) % 100,
+  delay: i * 0.07,
+  color: ['#f97316','#fbbf24','#34d399','#a78bfa','#f472b6','#60a5fa'][i % 6],
+}));
+
 export function RewardScene({ younis, onNext }: RewardSceneProps) {
-  const confettiColors = [
-    'bg-orange-500',
-    'bg-amber-400',
-    'bg-emerald-500',
-    'bg-purple-500',
-    'bg-pink-500',
-    'bg-blue-500',
-  ];
-
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-purple-900 via-indigo-800 to-purple-900 overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden">
+      {/* Reward background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url('/reward.jpg')` }}
+      />
+      <div className="absolute inset-0 bg-black/50" />
+
       {/* Confetti */}
-      {Array.from({ length: 50 }).map((_, i) => (
-        <ConfettiPiece 
-          key={i} 
-          delay={i * 0.05} 
-          color={confettiColors[i % confettiColors.length]} 
-        />
-      ))}
+      {confettiData.map((c, i) => <ConfettiPiece key={i} {...c} />)}
 
-      {/* Radial Glow */}
-      <div className="absolute inset-0 bg-gradient-radial from-amber-400/20 via-transparent to-transparent" />
+      {/* Radial glow */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 60% 60% at 50% 50%, rgba(251,191,36,0.2), transparent)' }}
+        animate={{ opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 2.5, repeat: Infinity }}
+      />
 
-      {/* Content */}
       <div className="relative z-10 flex items-center justify-center h-full p-8">
         <motion.div
-          className="max-w-2xl w-full"
+          className="w-full max-w-xl text-center"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', bounce: 0.4, duration: 0.8 }}
         >
-          {/* Celebration Header */}
+          {/* Trophy */}
           <motion.div
-            className="text-center mb-8"
-            initial={{ y: -50, opacity: 0 }}
+            className="text-8xl mb-4"
+            animate={{ rotate: [-8, 8, -8], scale: [1, 1.08, 1] }}
+            transition={{ duration: 0.7, repeat: Infinity, repeatDelay: 2.5 }}
+          >
+            🏆
+          </motion.div>
+
+          <motion.h2
+            className="text-5xl font-black text-white mb-2"
+            style={{ textShadow: '0 0 40px rgba(251,191,36,0.7)' }}
+            initial={{ y: -30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <motion.div
-              className="inline-block mb-4"
-              animate={{ 
-                rotate: [0, -10, 10, -10, 0],
-                scale: [1, 1.1, 1, 1.1, 1],
-              }}
-              transition={{ 
-                duration: 0.6,
-                repeat: Infinity,
-                repeatDelay: 2,
-              }}
-            >
-              <Award className="w-24 h-24 text-yellow-300 drop-shadow-2xl" />
-            </motion.div>
-            
-            <h2 className="text-5xl font-black text-white mb-3" style={{ fontFamily: 'var(--font-display)' }}>
-              Mission Complete!
-            </h2>
-            <p className="text-xl font-bold text-purple-200" style={{ fontFamily: 'var(--font-display)' }}>
-              You made a smart decision, {younis.name}!
-            </p>
-          </motion.div>
-
-          {/* Rewards Card */}
-          <motion.div
-            className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 border-2 border-amber-300/50 shadow-2xl mb-8"
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+            Mission Complete!
+          </motion.h2>
+          <motion.p
+            className="text-lg font-bold text-purple-200 mb-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <h3 className="text-2xl font-black text-white text-center mb-6" style={{ fontFamily: 'var(--font-display)' }}>
-              Your Rewards
-            </h3>
+            You made a smart decision, {younis.name}! 🌟
+          </motion.p>
 
-            {/* Reward Items */}
-            <div className="space-y-4">
-              {/* XP */}
+          {/* Rewards */}
+          <motion.div
+            className="rounded-3xl p-6 mb-6 space-y-3"
+            style={{
+              background: 'rgba(255,255,255,0.08)',
+              backdropFilter: 'blur(20px)',
+              border: '1.5px solid rgba(251,191,36,0.35)',
+            }}
+            initial={{ y: 40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.55 }}
+          >
+            <h3 className="text-lg font-black text-white mb-4">Your Rewards</h3>
+
+            {[
+              { icon: Zap,   label: '+120 XP',  sub: 'Experience gained', color: '#fbbf24', bg: 'rgba(251,191,36,0.15)' },
+              { icon: Coins, label: '+50 Coins', sub: 'Added to savings',  color: '#34d399', bg: 'rgba(52,211,153,0.15)'  },
+            ].map(({ icon: Icon, label, sub, color, bg }, i) => (
               <motion.div
-                className="bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl p-5 flex items-center justify-between"
-                initial={{ x: -100, opacity: 0 }}
+                key={label}
+                className="flex items-center gap-4 rounded-2xl px-5 py-4"
+                style={{ background: bg, border: `1px solid ${color}40` }}
+                initial={{ x: -60, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.7, type: 'spring' }}
+                transition={{ delay: 0.7 + i * 0.15, type: 'spring' }}
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center">
-                    <Zap className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-white/80" style={{ fontFamily: 'var(--font-display)' }}>
-                      Experience Points
-                    </div>
-                    <div className="text-2xl font-black text-white" style={{ fontFamily: 'var(--font-display)' }}>
-                      +120 XP
-                    </div>
-                  </div>
-                </div>
-                <motion.div
-                  className="text-4xl font-black text-white"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 0.5, delay: 0.9 }}
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: `${color}22` }}
                 >
-                  ✓
-                </motion.div>
-              </motion.div>
-
-              {/* Coins */}
-              <motion.div
-                className="bg-gradient-to-r from-amber-500 to-yellow-500 rounded-2xl p-5 flex items-center justify-between"
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.9, type: 'spring' }}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center">
-                    <Coins className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-white/80" style={{ fontFamily: 'var(--font-display)' }}>
-                      Bonus Coins
-                    </div>
-                    <div className="text-2xl font-black text-white" style={{ fontFamily: 'var(--font-display)' }}>
-                      +50 Coins
-                    </div>
-                  </div>
+                  <Icon className="w-6 h-6" style={{ color }} />
                 </div>
-                <motion.div
-                  className="text-4xl font-black text-white"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 0.5, delay: 1.1 }}
-                >
-                  ✓
-                </motion.div>
-              </motion.div>
-
-              {/* Badge */}
-              <motion.div
-                className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-5 flex items-center justify-between"
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 1.1, type: 'spring' }}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center">
-                    <Award className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-white/80" style={{ fontFamily: 'var(--font-display)' }}>
-                      New Badge Unlocked
-                    </div>
-                    <div className="text-2xl font-black text-white" style={{ fontFamily: 'var(--font-display)' }}>
-                      Smart Decision 🧠
-                    </div>
-                  </div>
+                <div className="text-left">
+                  <div className="text-xl font-black text-white">{label}</div>
+                  <div className="text-xs font-medium" style={{ color: `${color}bb` }}>{sub}</div>
                 </div>
-                <motion.div
-                  className="text-4xl"
-                  animate={{ 
-                    rotate: [0, 360],
-                    scale: [1, 1.3, 1]
-                  }}
-                  transition={{ duration: 0.8, delay: 1.3 }}
-                >
-                  ✨
-                </motion.div>
               </motion.div>
-            </div>
+            ))}
 
-            {/* Updated Stats */}
+            {/* Badge */}
             <motion.div
-              className="mt-6 pt-6 border-t-2 border-white/20"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.5 }}
+              className="flex items-center gap-4 rounded-2xl px-5 py-4"
+              style={{ background: 'rgba(167,139,250,0.15)', border: '1px solid rgba(167,139,250,0.3)' }}
+              initial={{ x: -60, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 1, type: 'spring' }}
             >
-              <div className="grid grid-cols-2 gap-4 text-center">
-                <div>
-                  <div className="text-sm font-bold text-white/70" style={{ fontFamily: 'var(--font-display)' }}>
-                    Total Coins
-                  </div>
-                  <div className="text-3xl font-black text-amber-300" style={{ fontFamily: 'var(--font-display)' }}>
-                    {younis.coins}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-white/70" style={{ fontFamily: 'var(--font-display)' }}>
-                    XP Progress
-                  </div>
-                  <div className="text-3xl font-black text-emerald-300" style={{ fontFamily: 'var(--font-display)' }}>
-                    {younis.xp}/{younis.maxXP}
-                  </div>
-                </div>
+              <motion.div
+                className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+                style={{ background: 'rgba(167,139,250,0.2)' }}
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 1, repeat: Infinity, repeatDelay: 2 }}
+              >
+                🏅
+              </motion.div>
+              <div className="text-left">
+                <div className="text-base font-black text-white">Smart Decision Badge</div>
+                <div className="text-xs font-medium text-purple-300">Unlocked achievement!</div>
               </div>
             </motion.div>
           </motion.div>
 
-          {/* Continue Button */}
-          <motion.div
-            className="flex justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.7 }}
+          {/* Next */}
+          <motion.button
+            onClick={onNext}
+            data-testid="button-view-dashboard"
+            className="px-10 py-4 rounded-2xl text-white text-lg font-black flex items-center gap-3 mx-auto"
+            style={{
+              background: 'linear-gradient(135deg, #f97316, #fbbf24)',
+              boxShadow: '0 0 32px rgba(249,115,22,0.5)',
+            }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2 }}
+            whileHover={{ scale: 1.06, boxShadow: '0 0 48px rgba(249,115,22,0.7)' }}
+            whileTap={{ scale: 0.96 }}
           >
-            <button
-              onClick={onNext}
-              data-testid="button-continue"
-              className="group px-12 py-5 bg-white text-purple-900 text-xl font-black rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 active:scale-95"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
-              <span className="flex items-center gap-3">
-                Continue
-                <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </button>
-          </motion.div>
+            View Parent Dashboard
+            <ArrowRight className="w-5 h-5" />
+          </motion.button>
         </motion.div>
       </div>
     </div>

@@ -148,17 +148,23 @@ function DecisionTree() {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export function ParentDashboard({ younis }: ParentDashboardProps) {
   return (
-    <div className="relative w-full h-full bg-slate-900/70 backdrop-blur-xl overflow-auto"
+    <div className="relative w-full h-full overflow-auto"
       style={{ fontFamily: 'var(--font-parent)' }}>
+
+      {/* Dashboard background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url('/dashboard.jpg')` }}
+      />
+      {/* Dark glass overlay so cards remain legible */}
+      <div className="absolute inset-0 bg-black/55 backdrop-blur-[1px]" />
 
       {/* Ambient glow blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20"
+        <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-15"
           style={{ background: 'radial-gradient(circle, #6366f1 0%, transparent 70%)' }} />
-        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full opacity-15"
+        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full opacity-10"
           style={{ background: 'radial-gradient(circle, #06b6d4 0%, transparent 70%)' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full opacity-10"
-          style={{ background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)' }} />
       </div>
 
       <div className="relative z-10 p-3 h-full flex flex-col gap-2">

@@ -6,12 +6,16 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { DemoNav } from '@/components/DemoNav';
 import { LandingScene } from '@/components/scenes/LandingScene';
 import { IntroScene } from '@/components/scenes/IntroScene';
+import { MapScene } from '@/components/scenes/MapScene';
 import { StreetScene } from '@/components/scenes/StreetScene';
 import { ChallengeScene } from '@/components/scenes/ChallengeScene';
 import { RewardScene } from '@/components/scenes/RewardScene';
 import { ParentDashboard } from '@/components/scenes/ParentDashboard';
 import { EndCardScene } from '@/components/scenes/EndCardScene';
 import { initialYounisState, updatedYounisState } from '@/lib/mock-data';
+
+// Scene index reference:
+// 0 Landing  1 Intro  2 Map  3 Street  4 Challenge  5 Reward  6 Dashboard  7 Final
 
 const queryClient = new QueryClient();
 
@@ -21,26 +25,23 @@ function FikrDemo() {
 
   const handleSceneChange = (scene: number) => {
     setCurrentScene(scene);
-    // Reset Younis state if going back to early scenes
-    if (scene <= 3) {
-      setYounisState(initialYounisState);
-    }
+    if (scene <= 3) setYounisState(initialYounisState);
   };
 
-  const handleNext = () => {
-    setCurrentScene((prev) => Math.min(prev + 1, 6));
-  };
+  const handleNext = () => setCurrentScene((prev) => Math.min(prev + 1, 7));
 
-  const handleLocationClick = (location: string) => {
-    if (location === 'toy-shop') {
-      setCurrentScene(3);
-    }
+  // Map scene: clicking any hotspot advances to Street (3)
+  const handleMapClick = (_location: string) => setCurrentScene(3);
+
+  // Street scene: Toy Shop → Challenge (4)
+  const handleStreetClick = (location: string) => {
+    if (location === 'toy-shop') setCurrentScene(4);
   };
 
   const handleDecision = (decision: 'buy' | 'save') => {
     if (decision === 'save') {
       setYounisState(updatedYounisState);
-      setCurrentScene(4);
+      setCurrentScene(5);
     }
   };
 
@@ -49,108 +50,62 @@ function FikrDemo() {
     setYounisState(initialYounisState);
   };
 
+  const sceneVariants = {
+    fadeSlide: {
+      initial: { opacity: 0, x: 60 },
+      animate: { opacity: 1, x: 0 },
+      exit:    { opacity: 0, x: -60 },
+      transition: { duration: 0.4 },
+    },
+    zoomIn: {
+      initial: { opacity: 0, scale: 0.95 },
+      animate: { opacity: 1, scale: 1 },
+      exit:    { opacity: 0, scale: 1.05 },
+      transition: { duration: 0.5 },
+    },
+    fade: {
+      initial: { opacity: 0 },
+      animate: { opacity: 1 },
+      exit:    { opacity: 0 },
+      transition: { duration: 0.4 },
+    },
+  };
+
+  const getVariant = (scene: number) => {
+    if (scene === 0 || scene === 7) return sceneVariants.zoomIn;
+    if (scene === 6) return sceneVariants.fade;
+    return sceneVariants.fadeSlide;
+  };
+
+  const renderScene = () => {
+    const v = getVariant(currentScene);
+    const key = `scene-${currentScene}`;
+    return (
+      <motion.div key={key} {...v} className="absolute inset-0">
+        {currentScene === 0 && <LandingScene onNext={handleNext} />}
+        {currentScene === 1 && <IntroScene younis={younisState} onNext={handleNext} />}
+        {currentScene === 2 && <MapScene younis={younisState} onLocationClick={handleMapClick} />}
+        {currentScene === 3 && <StreetScene younis={younisState} onLocationClick={handleStreetClick} />}
+        {currentScene === 4 && <ChallengeScene younis={younisState} onDecision={handleDecision} />}
+        {currentScene === 5 && <RewardScene younis={updatedYounisState} onNext={handleNext} />}
+        {currentScene === 6 && <ParentDashboard younis={updatedYounisState} />}
+        {currentScene === 7 && <EndCardScene onRestart={handleRestart} />}
+      </motion.div>
+    );
+  };
+
   return (
     <div className="h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col overflow-hidden">
-      {/* Demo Navigation */}
       <DemoNav currentScene={currentScene} onSceneChange={handleSceneChange} />
 
-      {/* Main Container - 16:9 Cinematic */}
-      <div className="flex-1 flex items-center justify-center p-4 overflow-hidden min-h-0">
-        <div 
-          className="w-full max-w-[1280px] bg-black shadow-2xl overflow-hidden relative"
-          style={{ aspectRatio: '16/9', maxHeight: '100%' }}
+      {/* 16:9 cinematic container */}
+      <div className="flex-1 flex items-center justify-center p-3 overflow-hidden min-h-0">
+        <div
+          className="w-full max-w-[1280px] shadow-2xl overflow-hidden relative rounded-sm"
+          style={{ aspectRatio: '16/9', maxHeight: '100%', background: '#000' }}
         >
           <AnimatePresence mode="wait">
-            {currentScene === 0 && (
-              <motion.div
-                key="scene-0"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.05 }}
-                transition={{ duration: 0.5 }}
-                className="absolute inset-0"
-              >
-                <LandingScene onNext={handleNext} />
-              </motion.div>
-            )}
-
-            {currentScene === 1 && (
-              <motion.div
-                key="scene-1"
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.4 }}
-                className="absolute inset-0"
-              >
-                <IntroScene younis={younisState} onNext={handleNext} />
-              </motion.div>
-            )}
-
-            {currentScene === 2 && (
-              <motion.div
-                key="scene-2"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 1.1 }}
-                transition={{ duration: 0.4 }}
-                className="absolute inset-0"
-              >
-                <StreetScene younis={younisState} onLocationClick={handleLocationClick} />
-              </motion.div>
-            )}
-
-            {currentScene === 3 && (
-              <motion.div
-                key="scene-3"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -50 }}
-                transition={{ duration: 0.4 }}
-                className="absolute inset-0"
-              >
-                <ChallengeScene younis={younisState} onDecision={handleDecision} />
-              </motion.div>
-            )}
-
-            {currentScene === 4 && (
-              <motion.div
-                key="scene-4"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.5 }}
-                className="absolute inset-0"
-              >
-                <RewardScene younis={updatedYounisState} onNext={handleNext} />
-              </motion.div>
-            )}
-
-            {currentScene === 5 && (
-              <motion.div
-                key="scene-5"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="absolute inset-0"
-              >
-                <ParentDashboard younis={updatedYounisState} />
-              </motion.div>
-            )}
-
-            {currentScene === 6 && (
-              <motion.div
-                key="scene-6"
-                initial={{ opacity: 0, scale: 1.1 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.5 }}
-                className="absolute inset-0"
-              >
-                <EndCardScene onRestart={handleRestart} />
-              </motion.div>
-            )}
+            {renderScene()}
           </AnimatePresence>
         </div>
       </div>
