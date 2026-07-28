@@ -50,15 +50,15 @@ function FikrDemo() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col">
+    <div className="h-screen w-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col overflow-hidden">
       {/* Demo Navigation */}
       <DemoNav currentScene={currentScene} onSceneChange={handleSceneChange} />
 
       {/* Main Container - 16:9 Cinematic */}
-      <div className="flex-1 flex items-center justify-center p-4">
+      <div className="flex-1 flex items-center justify-center p-4 overflow-hidden min-h-0">
         <div 
           className="w-full max-w-[1280px] bg-black shadow-2xl overflow-hidden relative"
-          style={{ aspectRatio: '16/9', maxHeight: '720px' }}
+          style={{ aspectRatio: '16/9', maxHeight: '100%' }}
         >
           <AnimatePresence mode="wait">
             {currentScene === 0 && (
