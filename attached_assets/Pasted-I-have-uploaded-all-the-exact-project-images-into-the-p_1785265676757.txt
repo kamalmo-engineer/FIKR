@@ -1,0 +1,40 @@
+I have uploaded all the exact project images into the `/public` directory with clean filenames. 
+
+Please update the React application to use these exact images as backgrounds and visual layers for each scene, ensuring interactive UI overlays (buttons, cards, Framer Motion animations) render smoothly on top of them:
+
+1. Scene 1 - Landing / Hero Scene:
+   - Background Image: `/landing.jpg`
+   - Overlay: Active "Start Your Journey" button positioned over the CTA area that triggers a smooth transition to Scene 2.
+
+2. Scene 2 - Younis Intro / Onboarding:
+   - Background Image: `/Younis Intro.jpg`
+   - Overlay: Interactive selections for AGE GROUP (6-8, 9-12, 13-18), MY DREAM icons, FINANCIAL GOAL ("Buy My Dream Scooter"), and an animated "START MY JOURNEY" button moving to Scene 3.
+
+3. Scene 3 - City Map Hub:
+   - Background Image: `/map.jpg`
+   - Overlay: Interactive hotspots on buildings (Toy Shop, Bank, Parent Center) that allow clicking to jump into the street or specific scenes.
+
+4. Scene 4 - Street Hub:
+   - Background Image: `/streat.jpg`
+   - Overlay: Interactive navigation walking Younis down the street toward the Toy Shop.
+
+5. Scene 5 - Challenge Scene (Toy Shop):
+   - Background Image: `/Challang.jpg`
+   - Overlay: Financial choice modal ("Buy Scooter Now for 1250 Coins" vs "Wait & Save").
+
+6. Scene 6 - Reward / Mission Complete:
+   - Background Image: `/reward.jpg`
+   - Overlay: Popups for +120 XP, +50 Coins, and "Smart Decision Badge" with celebration particle effects.
+
+7. Scene 7 - Parent Dashboard (Family Intelligence Center):
+   - Background Image: `/Dash board.jpg`
+   - Overlay: Translucent Apple Vision Pro style glassmorphism cards layered on top, showing AI Coach tips, Skills meters, Decision Tree, and Quick Stats.
+
+8. Scene 8 - Final Closing Scene:
+   - Background Image: `/final sean.jpg`
+   - Overlay: Closing FIKR branding card with a "Restart Demo" button.
+
+Requirements:
+- Force a strict 16:9 cinematic aspect ratio centered on screen.
+- Keep the top Demo Navigation Bar so judges can switch between any scene instantly: [Landing] -> [Intro] -> [Map] -> [Street] -> [Challenge] -> [Reward] -> [Dashboard] -> [Final].
+- Use Framer Motion for fade and zoom transitions between scenes.
