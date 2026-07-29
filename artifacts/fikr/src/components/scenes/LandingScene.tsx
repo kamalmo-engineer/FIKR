@@ -48,27 +48,6 @@ export function LandingScene({ onNext }: LandingSceneProps) {
           transition={{ duration: 0.9, ease: [0.68, -0.55, 0.265, 1.55] }}
           className="flex flex-col items-center"
         >
-          {/* FIKR wordmark */}
-          <motion.h1
-            className="text-[7rem] font-black leading-none mb-3 tracking-tight"
-            style={{
-              background: 'linear-gradient(135deg, #fb923c 0%, #fbbf24 45%, #f97316 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              filter: 'drop-shadow(0 0 30px rgba(251,146,60,0.55))',
-            }}
-            animate={{
-              filter: [
-                'drop-shadow(0 0 24px rgba(251,146,60,0.45))',
-                'drop-shadow(0 0 44px rgba(251,146,60,0.75))',
-                'drop-shadow(0 0 24px rgba(251,146,60,0.45))',
-              ],
-            }}
-            transition={{ duration: 2.5, repeat: Infinity }}
-          >
-            FIKR
-          </motion.h1>
-
           {/* Tagline */}
           <motion.p
             className="text-xl font-bold text-white mb-10 max-w-xl leading-relaxed"
