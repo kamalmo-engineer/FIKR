@@ -42,9 +42,10 @@ function deriveFromYounis(younis: YounisState) {
   const dreamGoalPct = Math.min(Math.round((younis.coins / younis.goalCost) * 100), 100);
   const coinsToGoal  = Math.max(0, younis.goalCost - younis.coins);
 
-  const spendTxns     = younis.transactions.filter(t => t.type === 'spend');
+  const txns           = younis.transactions ?? [];
+  const spendTxns      = txns.filter(t => t.type === 'spend');
   const impulsiveCount = spendTxns.filter(t => t.isImpulsive).length;
-  const totalFlow     = younis.totalSpent + younis.coins;
+  const totalFlow      = (younis.totalSpent ?? 0) + younis.coins;
   const spendingRatio = totalFlow > 0 ? younis.totalSpent / totalFlow : 0;
 
   const isOverspender = spendingRatio > 0.35 || impulsiveCount > 1;
@@ -348,11 +349,11 @@ export function ParentDashboard({ younis, onNext }: ParentDashboardProps) {
               </div>
               <div className="flex items-center gap-1 mt-0.5">
                 <motion.div
-                  key={statusLabel}
+                  key={statusLabel + '-dot'}
                   className={`w-1.5 h-1.5 rounded-full animate-pulse ${statusPulse}`}
                 />
                 <motion.span
-                  key={statusLabel}
+                  key={statusLabel + '-label'}
                   className="text-xs font-medium"
                   style={{ color: statusColor }}
                   initial={{ opacity: 0, x: -6 }}
@@ -611,7 +612,7 @@ export function ParentDashboard({ younis, onNext }: ParentDashboardProps) {
             ) : (
               <div className="flex flex-col gap-1">
                 <AnimatePresence>
-                  {younis.transactions.slice(0, 4).map((tx, i) => (
+                  {txns.slice(0, 4).map((tx, i) => (
                     <motion.div
                       key={tx.id}
                       className="flex items-center gap-2 rounded-xl px-2 py-1"
