@@ -48,17 +48,6 @@ export function LandingScene({ onNext }: LandingSceneProps) {
           transition={{ duration: 0.9, ease: [0.68, -0.55, 0.265, 1.55] }}
           className="flex flex-col items-center"
         >
-          {/* Tagline */}
-          <motion.p
-            className="text-xl font-bold text-white mb-10 max-w-xl leading-relaxed"
-            style={{ textShadow: '0 2px 14px rgba(0,0,0,0.5)' }}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.35, duration: 0.7 }}
-          >
-            Think Better. Decide Better. Build Better Futures.
-          </motion.p>
-
           {/* CTA */}
           <motion.button
             onClick={onNext}
