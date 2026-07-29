@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Coins, ArrowRight } from 'lucide-react';
+import { Zap, Coins, BarChart3 } from 'lucide-react';
 import { YounisState } from '@/lib/mock-data';
 
 interface RewardSceneProps {
@@ -141,23 +141,51 @@ export function RewardScene({ younis, onNext }: RewardSceneProps) {
             </motion.div>
           </motion.div>
 
-          {/* Next */}
+          {/* Parent Dashboard CTA */}
           <motion.button
             onClick={onNext}
             data-testid="button-view-dashboard"
-            className="px-10 py-4 rounded-2xl text-white text-lg font-black flex items-center gap-3 mx-auto"
+            className="relative w-full overflow-hidden rounded-2xl text-white flex items-center justify-center gap-3 px-8 py-4"
             style={{
-              background: 'linear-gradient(135deg, #f97316, #fbbf24)',
-              boxShadow: '0 0 32px rgba(249,115,22,0.5)',
+              background: 'rgba(255,255,255,0.07)',
+              backdropFilter: 'blur(20px)',
+              border: '1.5px solid rgba(167,139,250,0.5)',
+              boxShadow: '0 0 28px rgba(167,139,250,0.25), inset 0 1px 0 rgba(255,255,255,0.12)',
             }}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2 }}
-            whileHover={{ scale: 1.06, boxShadow: '0 0 48px rgba(249,115,22,0.7)' }}
-            whileTap={{ scale: 0.96 }}
+            whileHover={{
+              scale: 1.03,
+              boxShadow: '0 0 48px rgba(167,139,250,0.55), inset 0 1px 0 rgba(255,255,255,0.18)',
+              border: '1.5px solid rgba(167,139,250,0.85)',
+            }}
+            whileTap={{ scale: 0.97 }}
           >
-            View Parent Dashboard
-            <ArrowRight className="w-5 h-5" />
+            {/* Animated shimmer sweep */}
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.09) 50%, transparent 65%)',
+                backgroundSize: '200% 100%',
+              }}
+              animate={{ backgroundPosition: ['-100% 0', '200% 0'] }}
+              transition={{ duration: 2.8, repeat: Infinity, ease: 'linear', repeatDelay: 1 }}
+            />
+
+            {/* Icon */}
+            <div
+              className="relative w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'rgba(167,139,250,0.2)', border: '1px solid rgba(167,139,250,0.4)' }}
+            >
+              <BarChart3 className="w-4.5 h-4.5 text-purple-300" style={{ width: 18, height: 18 }} />
+            </div>
+
+            {/* Label */}
+            <div className="relative text-left">
+              <p className="text-base font-black text-white leading-tight">View Progress in Parent Dashboard</p>
+              <p className="text-[11px] font-medium text-purple-300/80">See full analytics &amp; insights →</p>
+            </div>
           </motion.button>
         </motion.div>
       </div>
