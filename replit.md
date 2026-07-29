@@ -1,6 +1,6 @@
-# [Project name]
+# FIKR — Financial Literacy Platform
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A gamified, cinematic financial literacy demo for kids and parents — built as a playable MVP with 8 interactive scenes, Framer Motion animations, and a glassmorphism Parent Dashboard.
 
 ## Run & Operate
 

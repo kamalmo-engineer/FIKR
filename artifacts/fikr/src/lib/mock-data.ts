@@ -1,3 +1,13 @@
+export interface Transaction {
+  id: string;
+  item: string;
+  location: string;
+  amount: number;
+  type: 'spend' | 'save' | 'earn';
+  isImpulsive: boolean;
+  timestamp: number;
+}
+
 export interface YounisState {
   name: string;
   level: number;
@@ -10,6 +20,8 @@ export interface YounisState {
   goalCost: number;
   decisions: string[];
   badges: string[];
+  transactions: Transaction[];
+  totalSpent: number;
 }
 
 export const initialYounisState: YounisState = {
@@ -26,7 +38,9 @@ export const initialYounisState: YounisState = {
     "Saved instead of buying candy",
     "Chose cheaper option at store"
   ],
-  badges: ["Quick Thinker", "Saver"]
+  badges: ["Quick Thinker", "Saver"],
+  transactions: [],
+  totalSpent: 0,
 };
 
 export const updatedYounisState: YounisState = {
@@ -44,5 +58,7 @@ export const updatedYounisState: YounisState = {
     "Chose cheaper option at store",
     "Chose to save and wait for scooter"
   ],
-  badges: ["Quick Thinker", "Saver", "Smart Decision"]
+  badges: ["Quick Thinker", "Saver", "Smart Decision"],
+  transactions: [],
+  totalSpent: 0,
 };

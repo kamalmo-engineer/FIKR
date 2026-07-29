@@ -59,13 +59,13 @@ const BUILDINGS = [
 
 // ── Bank Modal ─────────────────────────────────────────────────────────────────
 function BankModal({ younis, onClose }: { younis: YounisState; onClose: () => void }) {
-  const { deductCoins, younis: liveYounis } = useYounis();
+  const { saveCoins, younis: liveYounis } = useYounis();
   const [deposited, setDeposited] = useState(false);
   const deposit = 500;
   const interest = Math.round(deposit * 0.05);
 
   const handleDeposit = () => {
-    deductCoins(deposit);
+    saveCoins(deposit, 'Bank Deposit', 'FIKR City Bank');
     setDeposited(true);
   };
 
@@ -205,14 +205,17 @@ const MART_ITEMS = [
 const MART_BUDGET = 300;
 
 function MartModal({ younis, onClose }: { younis: YounisState; onClose: () => void }) {
-  const { deductCoins, younis: liveYounis } = useYounis();
+  const { spendCoins, younis: liveYounis } = useYounis();
   const [checked, setChecked] = useState<Set<string>>(new Set(['lunch', 'supplies', 'book']));
   const [purchased, setPurchased] = useState(false);
-  const total = MART_ITEMS.filter(i => checked.has(i.id)).reduce((s, i) => s + i.cost, 0);
+  const selectedItems = MART_ITEMS.filter(i => checked.has(i.id));
+  const total = selectedItems.reduce((s, i) => s + i.cost, 0);
   const overBudget = total > MART_BUDGET;
+  const hasWants = selectedItems.some(i => !i.need);
 
   const handleConfirmPurchase = () => {
-    deductCoins(total);
+    const itemNames = selectedItems.map(i => `${i.emoji} ${i.label}`).join(', ');
+    spendCoins(total, itemNames || 'FIKR Mart items', 'FIKR Mart', overBudget || hasWants);
     setPurchased(true);
     setTimeout(onClose, 1400);
   };

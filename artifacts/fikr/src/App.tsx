@@ -42,16 +42,29 @@ function FikrDemo() {
   const handleDecision = (decision: 'buy' | 'save') => {
     if (decision === 'save') {
       // Apply reward on top of current live state (not a hardcoded snapshot)
-      setYounis(prev => ({
-        ...prev,
-        coins: prev.coins + 50,
-        xp: Math.min(prev.xp + 120, prev.maxXP),
-        progress: Math.min(Math.round(((prev.coins + 50) / prev.goalCost) * 100), 100),
-        decisions: [...prev.decisions, 'Chose to save and wait for scooter'],
-        badges: prev.badges.includes('Smart Decision')
-          ? prev.badges
-          : [...prev.badges, 'Smart Decision'],
-      }));
+      setYounis(prev => {
+        const newCoins = prev.coins + 50;
+        const earnTx = {
+          id: `${Date.now()}-earn`,
+          item: 'Smart Decision Bonus (+50 Coins, +120 XP)',
+          location: 'Toy Shop Challenge',
+          amount: 50,
+          type: 'earn' as const,
+          isImpulsive: false,
+          timestamp: Date.now(),
+        };
+        return {
+          ...prev,
+          coins: newCoins,
+          xp: Math.min(prev.xp + 120, prev.maxXP),
+          progress: Math.min(Math.round((newCoins / prev.goalCost) * 100), 100),
+          decisions: [...prev.decisions, 'Chose to save and wait for scooter'],
+          badges: prev.badges.includes('Smart Decision')
+            ? prev.badges
+            : [...prev.badges, 'Smart Decision'],
+          transactions: [earnTx, ...prev.transactions].slice(0, 12),
+        };
+      });
       setCurrentScene(5);
     }
   };
