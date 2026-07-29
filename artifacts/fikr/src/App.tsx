@@ -112,7 +112,7 @@ function FikrDemo() {
         {currentScene === 3 && <StreetScene younis={younis} onLocationClick={handleStreetClick} />}
         {currentScene === 4 && <ChallengeScene younis={younis} onDecision={handleDecision} />}
         {currentScene === 5 && <RewardScene younis={younis} onNext={handleNext} />}
-        {currentScene === 6 && <ParentDashboard younis={younis} />}
+        {currentScene === 6 && <ParentDashboard younis={younis} onNext={handleNext} />}
         {currentScene === 7 && <EndCardScene onRestart={handleRestart} />}
       </motion.div>
     );

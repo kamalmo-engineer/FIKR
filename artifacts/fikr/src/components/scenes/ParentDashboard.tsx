@@ -17,11 +17,14 @@ import {
   AlertTriangle,
   ArrowUpRight,
   ArrowDownRight,
+  ArrowRight,
+  FlagTriangleRight,
 } from 'lucide-react';
 import { YounisState, Transaction } from '@/lib/mock-data';
 
 interface ParentDashboardProps {
   younis: YounisState;
+  onNext: () => void;
 }
 
 // ─── Animation helpers ────────────────────────────────────────────────────────
@@ -276,7 +279,7 @@ function txSign(tx: Transaction): string {
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export function ParentDashboard({ younis }: ParentDashboardProps) {
+export function ParentDashboard({ younis, onNext }: ParentDashboardProps) {
   const {
     dreamGoalPct, coinsToGoal, isOverspender,
     statusLabel, statusColor, statusPulse,
@@ -675,6 +678,59 @@ export function ParentDashboard({ younis }: ParentDashboardProps) {
           </motion.div>
 
         </div>
+
+        {/* ── Complete Journey CTA ── */}
+        <motion.div
+          className="flex justify-end"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.55, duration: 0.5 }}
+        >
+          <motion.button
+            onClick={onNext}
+            className="relative flex items-center gap-3 px-5 py-2.5 rounded-2xl overflow-hidden"
+            style={{
+              background: 'linear-gradient(135deg, rgba(99,102,241,0.3), rgba(167,139,250,0.3))',
+              border: '1px solid rgba(167,139,250,0.5)',
+              boxShadow: '0 0 24px rgba(167,139,250,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+            }}
+            whileHover={{
+              scale: 1.04,
+              boxShadow: '0 0 40px rgba(167,139,250,0.6), inset 0 1px 0 rgba(255,255,255,0.18)',
+            }}
+            whileTap={{ scale: 0.97 }}
+          >
+            {/* Shimmer sweep */}
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.08) 50%, transparent 70%)',
+                backgroundSize: '200% 100%',
+              }}
+              animate={{ backgroundPosition: ['-100% 0', '200% 0'] }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: 'linear', repeatDelay: 1.2 }}
+            />
+
+            <div className="relative w-7 h-7 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'rgba(167,139,250,0.25)', border: '1px solid rgba(167,139,250,0.4)' }}>
+              <FlagTriangleRight className="w-3.5 h-3.5 text-purple-300" />
+            </div>
+
+            <div className="relative text-left">
+              <p className="text-xs font-black text-white leading-tight">Complete Journey</p>
+              <p className="text-[9px] font-medium text-purple-300/70">View Final Summary</p>
+            </div>
+
+            <motion.div
+              className="relative"
+              animate={{ x: [0, 3, 0] }}
+              transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <ArrowRight className="w-4 h-4 text-purple-300" />
+            </motion.div>
+          </motion.button>
+        </motion.div>
+
       </div>
     </div>
   );
