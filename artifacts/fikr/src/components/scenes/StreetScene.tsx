@@ -6,6 +6,7 @@ import {
   ArrowRight, Wallet, BarChart3,
 } from 'lucide-react';
 import { YounisState } from '@/lib/mock-data';
+import { useYounis } from '@/context/Younis';
 
 interface StreetSceneProps {
   younis: YounisState;
@@ -58,9 +59,15 @@ const BUILDINGS = [
 
 // ── Bank Modal ─────────────────────────────────────────────────────────────────
 function BankModal({ younis, onClose }: { younis: YounisState; onClose: () => void }) {
+  const { deductCoins, younis: liveYounis } = useYounis();
   const [deposited, setDeposited] = useState(false);
   const deposit = 500;
   const interest = Math.round(deposit * 0.05);
+
+  const handleDeposit = () => {
+    deductCoins(deposit);
+    setDeposited(true);
+  };
 
   return (
     <motion.div
@@ -103,7 +110,15 @@ function BankModal({ younis, onClose }: { younis: YounisState; onClose: () => vo
             <Wallet className="w-5 h-5 text-blue-400 flex-shrink-0" />
             <div>
               <p className="text-xs font-bold text-blue-300/70 uppercase tracking-wider">Your Wallet</p>
-              <p className="text-xl font-black text-white">{younis.coins} <span className="text-sm text-white/50">coins</span></p>
+              <motion.p
+                key={liveYounis.coins}
+                className="text-xl font-black text-white"
+                initial={{ scale: 1.2, color: '#86efac' }}
+                animate={{ scale: 1, color: '#ffffff' }}
+                transition={{ duration: 0.35 }}
+              >
+                {liveYounis.coins} <span className="text-sm text-white/50">coins</span>
+              </motion.p>
             </div>
           </div>
 
@@ -146,7 +161,7 @@ function BankModal({ younis, onClose }: { younis: YounisState; onClose: () => vo
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
                   Keep All Coins
                 </motion.button>
-                <motion.button onClick={() => setDeposited(true)}
+                <motion.button onClick={handleDeposit}
                   data-testid="button-deposit"
                   className="py-3 rounded-2xl text-sm font-black text-white"
                   style={{ background: 'linear-gradient(135deg, #1d4ed8, #3b82f6)', boxShadow: '0 0 18px rgba(96,165,250,0.4)' }}
@@ -190,9 +205,17 @@ const MART_ITEMS = [
 const MART_BUDGET = 300;
 
 function MartModal({ younis, onClose }: { younis: YounisState; onClose: () => void }) {
+  const { deductCoins, younis: liveYounis } = useYounis();
   const [checked, setChecked] = useState<Set<string>>(new Set(['lunch', 'supplies', 'book']));
+  const [purchased, setPurchased] = useState(false);
   const total = MART_ITEMS.filter(i => checked.has(i.id)).reduce((s, i) => s + i.cost, 0);
   const overBudget = total > MART_BUDGET;
+
+  const handleConfirmPurchase = () => {
+    deductCoins(total);
+    setPurchased(true);
+    setTimeout(onClose, 1400);
+  };
 
   const toggle = (id: string) => setChecked(prev => {
     const next = new Set(prev);
@@ -297,19 +320,33 @@ function MartModal({ younis, onClose }: { younis: YounisState; onClose: () => vo
             </motion.p>
           )}
 
-          <motion.button onClick={onClose}
-            disabled={overBudget}
+          {/* Live wallet balance */}
+          <div className="flex items-center justify-between px-1">
+            <span className="text-xs text-white/40 font-medium">Your wallet</span>
+            <motion.span
+              key={liveYounis.coins}
+              className="text-sm font-black text-amber-300 tabular-nums"
+              initial={{ scale: 1.25, color: '#86efac' }}
+              animate={{ scale: 1, color: '#fcd34d' }}
+              transition={{ duration: 0.35 }}
+            >
+              {liveYounis.coins} coins
+            </motion.span>
+          </div>
+
+          <motion.button onClick={handleConfirmPurchase}
+            disabled={overBudget || purchased}
             className="w-full py-3 rounded-2xl text-sm font-black text-white mt-1"
             style={{
-              background: overBudget
+              background: overBudget || purchased
                 ? 'rgba(255,255,255,0.08)'
                 : 'linear-gradient(135deg, #065f46, #34d399)',
-              opacity: overBudget ? 0.5 : 1,
-              boxShadow: overBudget ? 'none' : '0 0 18px rgba(52,211,153,0.4)',
+              opacity: overBudget || purchased ? 0.5 : 1,
+              boxShadow: overBudget || purchased ? 'none' : '0 0 18px rgba(52,211,153,0.4)',
             }}
-            whileHover={!overBudget ? { scale: 1.03 } : {}}
-            whileTap={!overBudget ? { scale: 0.97 } : {}}>
-            {overBudget ? 'Fix your budget first' : `Confirm Purchase (${total} coins) ✓`}
+            whileHover={!overBudget && !purchased ? { scale: 1.03 } : {}}
+            whileTap={!overBudget && !purchased ? { scale: 0.97 } : {}}>
+            {purchased ? '✓ Purchased!' : overBudget ? 'Fix your budget first' : `Confirm Purchase (${total} coins) ✓`}
           </motion.button>
         </div>
       </motion.div>

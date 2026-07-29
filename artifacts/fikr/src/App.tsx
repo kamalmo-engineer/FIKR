@@ -12,7 +12,7 @@ import { ChallengeScene } from '@/components/scenes/ChallengeScene';
 import { RewardScene } from '@/components/scenes/RewardScene';
 import { ParentDashboard } from '@/components/scenes/ParentDashboard';
 import { EndCardScene } from '@/components/scenes/EndCardScene';
-import { initialYounisState, updatedYounisState } from '@/lib/mock-data';
+import { YounisProvider, useYounis } from '@/context/Younis';
 
 // Scene index reference:
 // 0 Landing  1 Intro  2 Map  3 Street  4 Challenge  5 Reward  6 Dashboard  7 Final
@@ -21,11 +21,10 @@ const queryClient = new QueryClient();
 
 function FikrDemo() {
   const [currentScene, setCurrentScene] = useState(0);
-  const [younisState, setYounisState] = useState(initialYounisState);
+  const { younis, setYounis, resetYounis } = useYounis();
 
   const handleSceneChange = (scene: number) => {
     setCurrentScene(scene);
-    if (scene <= 3) setYounisState(initialYounisState);
   };
 
   const handleNext = () => setCurrentScene((prev) => Math.min(prev + 1, 7));
@@ -42,14 +41,24 @@ function FikrDemo() {
 
   const handleDecision = (decision: 'buy' | 'save') => {
     if (decision === 'save') {
-      setYounisState(updatedYounisState);
+      // Apply reward on top of current live state (not a hardcoded snapshot)
+      setYounis(prev => ({
+        ...prev,
+        coins: prev.coins + 50,
+        xp: Math.min(prev.xp + 120, prev.maxXP),
+        progress: Math.min(Math.round(((prev.coins + 50) / prev.goalCost) * 100), 100),
+        decisions: [...prev.decisions, 'Chose to save and wait for scooter'],
+        badges: prev.badges.includes('Smart Decision')
+          ? prev.badges
+          : [...prev.badges, 'Smart Decision'],
+      }));
       setCurrentScene(5);
     }
   };
 
   const handleRestart = () => {
+    resetYounis();
     setCurrentScene(0);
-    setYounisState(initialYounisState);
   };
 
   const sceneVariants = {
@@ -85,12 +94,12 @@ function FikrDemo() {
     return (
       <motion.div key={key} {...v} className="absolute inset-0">
         {currentScene === 0 && <LandingScene onNext={handleNext} />}
-        {currentScene === 1 && <IntroScene younis={younisState} onNext={handleNext} />}
-        {currentScene === 2 && <MapScene younis={younisState} onEnterStreet={handleEnterStreet} />}
-        {currentScene === 3 && <StreetScene younis={younisState} onLocationClick={handleStreetClick} />}
-        {currentScene === 4 && <ChallengeScene younis={younisState} onDecision={handleDecision} />}
-        {currentScene === 5 && <RewardScene younis={updatedYounisState} onNext={handleNext} />}
-        {currentScene === 6 && <ParentDashboard younis={updatedYounisState} />}
+        {currentScene === 1 && <IntroScene younis={younis} onNext={handleNext} />}
+        {currentScene === 2 && <MapScene younis={younis} onEnterStreet={handleEnterStreet} />}
+        {currentScene === 3 && <StreetScene younis={younis} onLocationClick={handleStreetClick} />}
+        {currentScene === 4 && <ChallengeScene younis={younis} onDecision={handleDecision} />}
+        {currentScene === 5 && <RewardScene younis={younis} onNext={handleNext} />}
+        {currentScene === 6 && <ParentDashboard younis={younis} />}
         {currentScene === 7 && <EndCardScene onRestart={handleRestart} />}
       </motion.div>
     );
@@ -118,10 +127,12 @@ function FikrDemo() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <FikrDemo />
-        <Toaster />
-      </TooltipProvider>
+      <YounisProvider>
+        <TooltipProvider>
+          <FikrDemo />
+          <Toaster />
+        </TooltipProvider>
+      </YounisProvider>
     </QueryClientProvider>
   );
 }
