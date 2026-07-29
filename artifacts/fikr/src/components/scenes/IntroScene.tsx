@@ -7,161 +7,162 @@ interface IntroSceneProps {
   onNext: () => void;
 }
 
-const ageGroups = ['6–8', '9–12', '13–18'];
-const dreamIcons = [
-  { label: 'Scooter', emoji: '🛴' },
-  { label: 'Gadget',  emoji: '📱' },
-  { label: 'Travel',  emoji: '✈️' },
-  { label: 'Books',   emoji: '📚' },
-];
+// Transparent hotspot — invisible by default, subtle glow on hover/selected
+function Hotspot({
+  style,
+  onClick,
+  selected,
+  glowColor = 'rgba(250,204,21,0.5)',
+  children,
+  testId,
+}: {
+  style: React.CSSProperties;
+  onClick?: () => void;
+  selected?: boolean;
+  glowColor?: string;
+  children?: React.ReactNode;
+  testId?: string;
+}) {
+  return (
+    <motion.button
+      data-testid={testId}
+      onClick={onClick}
+      className="absolute"
+      style={{
+        ...style,
+        background: selected ? 'rgba(250,204,21,0.18)' : 'transparent',
+        border: selected ? `1.5px solid ${glowColor}` : '1.5px solid transparent',
+        borderRadius: 8,
+        cursor: 'pointer',
+        boxShadow: selected ? `0 0 16px ${glowColor}` : 'none',
+        transition: 'all 0.2s ease',
+      }}
+      whileHover={{
+        background: 'rgba(255,255,255,0.08)',
+        border: `1.5px solid rgba(255,255,255,0.3)`,
+        boxShadow: `0 0 12px rgba(255,255,255,0.2)`,
+      }}
+    >
+      {children}
+    </motion.button>
+  );
+}
 
 export function IntroScene({ younis, onNext }: IntroSceneProps) {
   const [selectedAge, setSelectedAge] = useState('9–12');
-  const [selectedDream, setSelectedDream] = useState('Scooter');
+  const [selectedDream, setSelectedDream] = useState('Entrepreneur');
+  const [selectedGoal, setSelectedGoal] = useState('Buy My Dream Scooter');
+  const [selectedGender, setSelectedGender] = useState('Boy');
 
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {/* Background */}
+      {/* Full background — no overlays */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url('/younis-intro.jpg')` }}
       />
-      {/* Dark overlay so cards remain readable */}
-      <div className="absolute inset-0 bg-black/45 backdrop-blur-[1px]" />
 
-      {/* Content */}
-      <div className="relative z-10 flex items-center justify-center h-full px-8">
-        <motion.div
-          className="w-full max-w-2xl"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {/* Header */}
-          <motion.h2
-            className="text-4xl font-black text-center text-white mb-6"
-            style={{ textShadow: '0 2px 16px rgba(0,0,0,0.6)' }}
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            Welcome, Explorer! 👋
-          </motion.h2>
+      {/* ── AGE GROUP hotspots (left panel, upper) ── */}
+      {/* 6–8 */}
+      <Hotspot
+        testId="age-6-8"
+        style={{ left: '5.5%', top: '31%', width: '22%', height: '6.5%' }}
+        selected={selectedAge === '6–8'}
+        glowColor="rgba(96,165,250,0.6)"
+        onClick={() => setSelectedAge('6–8')}
+      />
+      {/* 9–12 */}
+      <Hotspot
+        testId="age-9-12"
+        style={{ left: '5.5%', top: '38%', width: '22%', height: '6.5%' }}
+        selected={selectedAge === '9–12'}
+        glowColor="rgba(250,204,21,0.6)"
+        onClick={() => setSelectedAge('9–12')}
+      />
+      {/* 13–18 */}
+      <Hotspot
+        testId="age-13-18"
+        style={{ left: '5.5%', top: '45%', width: '22%', height: '6.5%' }}
+        selected={selectedAge === '13–18'}
+        glowColor="rgba(167,139,250,0.6)"
+        onClick={() => setSelectedAge('13–18')}
+      />
 
-          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-7 shadow-2xl space-y-6">
-            {/* Age Group */}
-            <div>
-              <p className="text-sm font-bold text-white/70 uppercase tracking-widest mb-3">
-                Age Group
-              </p>
-              <div className="flex gap-3">
-                {ageGroups.map((age) => (
-                  <button
-                    key={age}
-                    onClick={() => setSelectedAge(age)}
-                    className="flex-1 py-3 rounded-2xl font-black text-lg transition-all duration-200"
-                    style={{
-                      background: selectedAge === age
-                        ? 'linear-gradient(135deg, #f97316, #fbbf24)'
-                        : 'rgba(255,255,255,0.1)',
-                      color: selectedAge === age ? '#fff' : 'rgba(255,255,255,0.6)',
-                      border: selectedAge === age ? 'none' : '1px solid rgba(255,255,255,0.15)',
-                      boxShadow: selectedAge === age ? '0 0 20px rgba(249,115,22,0.5)' : 'none',
-                    }}
-                  >
-                    {age}
-                  </button>
-                ))}
-              </div>
-            </div>
+      {/* ── MY DREAM hotspots (left panel, lower) — individual icons ── */}
+      {[
+        { id: 'Entrepreneur', left: '5.5%'  },
+        { id: 'Doctor',       left: '11.5%' },
+        { id: 'Engineer',     left: '17.5%' },
+        { id: 'Artist',       left: '23%'   },
+        { id: 'Explorer',     left: '28.5%' },
+      ].map(({ id, left }) => (
+        <Hotspot
+          key={id}
+          testId={`dream-${id.toLowerCase()}`}
+          style={{ left, top: '60%', width: '5.5%', height: '16%' }}
+          selected={selectedDream === id}
+          glowColor="rgba(52,211,153,0.6)"
+          onClick={() => setSelectedDream(id)}
+        />
+      ))}
 
-            {/* Dream Icons */}
-            <div>
-              <p className="text-sm font-bold text-white/70 uppercase tracking-widest mb-3">
-                My Dream
-              </p>
-              <div className="flex gap-3">
-                {dreamIcons.map(({ label, emoji }) => (
-                  <button
-                    key={label}
-                    onClick={() => setSelectedDream(label)}
-                    className="flex-1 flex flex-col items-center py-3 rounded-2xl transition-all duration-200"
-                    style={{
-                      background: selectedDream === label
-                        ? 'linear-gradient(135deg, rgba(251,191,36,0.4), rgba(249,115,22,0.4))'
-                        : 'rgba(255,255,255,0.08)',
-                      border: selectedDream === label
-                        ? '1.5px solid rgba(251,191,36,0.7)'
-                        : '1px solid rgba(255,255,255,0.12)',
-                    }}
-                  >
-                    <span className="text-2xl mb-1">{emoji}</span>
-                    <span className="text-xs font-bold text-white/80">{label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+      {/* ── FINANCIAL GOAL hotspots (right panel) ── */}
+      {[
+        { id: 'Save Money',            top: '31%', color: 'rgba(96,165,250,0.6)'  },
+        { id: 'Smart Spending',        top: '39%', color: 'rgba(167,139,250,0.6)' },
+        { id: 'Buy My Dream Scooter',  top: '47%', color: 'rgba(52,211,153,0.6)'  },
+        { id: 'Buy Something Special', top: '55%', color: 'rgba(249,115,22,0.6)'  },
+      ].map(({ id, top, color }) => (
+        <Hotspot
+          key={id}
+          testId={`goal-${id.replace(/\s+/g, '-').toLowerCase()}`}
+          style={{ left: '64.5%', top, width: '31%', height: '7%' }}
+          selected={selectedGoal === id}
+          glowColor={color}
+          onClick={() => setSelectedGoal(id)}
+        />
+      ))}
 
-            {/* Financial Goal */}
-            <div
-              className="flex items-center gap-4 rounded-2xl px-5 py-4"
-              style={{
-                background: 'linear-gradient(135deg, rgba(251,146,60,0.2), rgba(251,191,36,0.2))',
-                border: '1.5px solid rgba(251,191,36,0.4)',
-              }}
-            >
-              <span className="text-3xl">🛴</span>
-              <div>
-                <p className="text-xs font-bold text-amber-300 uppercase tracking-widest mb-0.5">
-                  Financial Goal
-                </p>
-                <p className="text-lg font-black text-white">Buy My Dream Scooter</p>
-                <p className="text-sm text-white/60">
-                  {younis.coins} / {younis.goalCost} coins saved
-                </p>
-              </div>
-              <div className="ml-auto text-right">
-                <div className="text-2xl font-black text-amber-300">
-                  {Math.round((younis.coins / younis.goalCost) * 100)}%
-                </div>
-                <div className="w-20 h-2 bg-white/10 rounded-full mt-1 overflow-hidden">
-                  <motion.div
-                    className="h-full rounded-full"
-                    style={{ background: 'linear-gradient(90deg, #f97316, #fbbf24)' }}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(younis.coins / younis.goalCost) * 100}%` }}
-                    transition={{ delay: 0.8, duration: 1, ease: 'easeOut' }}
-                  />
-                </div>
-              </div>
-            </div>
+      {/* ── Boy / Girl toggle (center bottom) ── */}
+      <Hotspot
+        testId="gender-boy"
+        style={{ left: '37%', top: '75.5%', width: '12%', height: '7%' }}
+        selected={selectedGender === 'Boy'}
+        glowColor="rgba(96,165,250,0.7)"
+        onClick={() => setSelectedGender('Boy')}
+      />
+      <Hotspot
+        testId="gender-girl"
+        style={{ left: '50%', top: '75.5%', width: '12%', height: '7%' }}
+        selected={selectedGender === 'Girl'}
+        glowColor="rgba(244,114,182,0.7)"
+        onClick={() => setSelectedGender('Girl')}
+      />
 
-            {/* CTA */}
-            <motion.button
-              onClick={onNext}
-              data-testid="button-begin-adventure"
-              className="w-full py-4 rounded-2xl text-white text-xl font-black relative overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, #f97316, #fbbf24)',
-                boxShadow: '0 0 32px rgba(249,115,22,0.45)',
-              }}
-              whileHover={{ scale: 1.03, boxShadow: '0 0 48px rgba(249,115,22,0.65)' }}
-              whileTap={{ scale: 0.97 }}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-            >
-              <motion.div
-                className="absolute inset-0 opacity-25"
-                style={{ background: 'linear-gradient(90deg, transparent, white, transparent)' }}
-                animate={{ x: ['-100%', '200%'] }}
-                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.2 }}
-              />
-              <span className="relative z-10">START MY JOURNEY ✨</span>
-            </motion.button>
-          </div>
-        </motion.div>
-      </div>
+      {/* ── START MY JOURNEY — transparent overlay over the green button ── */}
+      <motion.button
+        data-testid="button-begin-adventure"
+        onClick={onNext}
+        className="absolute"
+        style={{
+          left: '63%',
+          top: '73%',
+          width: '33%',
+          height: '11%',
+          background: 'transparent',
+          border: 'none',
+          cursor: 'pointer',
+          borderRadius: 40,
+        }}
+        whileHover={{
+          background: 'rgba(52,211,153,0.15)',
+          boxShadow: '0 0 28px rgba(52,211,153,0.5)',
+        }}
+        whileTap={{ scale: 0.97 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      />
     </div>
   );
 }
