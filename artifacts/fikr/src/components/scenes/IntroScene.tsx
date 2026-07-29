@@ -64,108 +64,23 @@ const CHARACTER = {
   Girl: { src: '/character-girl.png', name: 'Laila',  glow: 'rgba(244,114,182,', ring: '#f472b6', gradFrom: '#9d174d', gradTo: '#f9a8d4' },
 } as const;
 
-function CharacterAvatar({ gender }: { gender: 'Boy' | 'Girl' }) {
+function CharacterPhoto({ gender }: { gender: 'Boy' | 'Girl' }) {
   const c = CHARACTER[gender];
   return (
-    <div className="flex flex-col items-center relative" style={{ width: 160 }}>
-
-      {/* Holographic platform glow */}
-      <motion.div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full pointer-events-none"
-        style={{
-          width: 130,
-          height: 20,
-          background: `radial-gradient(ellipse, ${c.glow}0.55) 0%, transparent 70%)`,
-          filter: 'blur(5px)',
-        }}
-        animate={{ opacity: [0.5, 1, 0.5], scaleX: [1, 1.12, 1] }}
-        transition={{ duration: 2.2, repeat: Infinity }}
+    <AnimatePresence mode="wait">
+      <motion.img
+        key={gender}
+        src={c.src}
+        alt={c.name}
+        className="w-full h-full object-contain object-bottom select-none pointer-events-none"
+        style={{ maxHeight: '100%' }}
+        initial={{ opacity: 0, scale: 0.94, y: 12 }}
+        animate={{ opacity: 1, scale: 1,    y: 0  }}
+        exit={{    opacity: 0, scale: 0.94, y: 12 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 26 }}
+        draggable={false}
       />
-
-      {/* Photo + glassmorphic frame */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={gender}
-          className="flex flex-col items-center"
-          initial={{ scale: 0.88, opacity: 0, y: 10 }}
-          animate={{ scale: 1,    opacity: 1, y: 0  }}
-          exit={{    scale: 0.88, opacity: 0, y: 10 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-          style={{ marginBottom: 6 }}
-        >
-          <motion.div
-            className="relative flex items-end justify-center overflow-hidden"
-            style={{
-              width: 130,
-              height: 158,
-              borderRadius: '50% 50% 40% 40% / 45% 45% 35% 35%',
-              background: `linear-gradient(180deg, ${c.gradFrom}55 0%, ${c.gradTo}22 100%)`,
-              border: `2px solid ${c.ring}60`,
-            }}
-            animate={{
-              boxShadow: [
-                `0 0 24px ${c.glow}0.5), 0 0 60px ${c.glow}0.18)`,
-                `0 0 44px ${c.glow}0.85), 0 0 90px ${c.glow}0.3)`,
-                `0 0 24px ${c.glow}0.5), 0 0 60px ${c.glow}0.18)`,
-              ],
-            }}
-            transition={{ duration: 2.8, repeat: Infinity }}
-          >
-            <img
-              src={c.src}
-              alt={c.name}
-              className="w-full h-full object-cover object-top select-none"
-              draggable={false}
-            />
-
-            {/* Level badge */}
-            <div
-              className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-black text-white"
-              style={{
-                background: 'linear-gradient(135deg, #f97316, #fbbf24)',
-                boxShadow: '0 0 10px rgba(249,115,22,0.6)',
-              }}
-            >
-              Lv2
-            </div>
-          </motion.div>
-
-          {/* Name */}
-          <div
-            className="text-sm font-black text-white mt-2 mb-0.5"
-            style={{ textShadow: `0 0 14px ${c.ring}` }}
-          >
-            {c.name}
-          </div>
-          <div className="text-[9px] font-bold text-white/45 uppercase tracking-wider">Level 2 Explorer</div>
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Orbit ring */}
-      <motion.div
-        className="absolute pointer-events-none"
-        style={{
-          width: 150,
-          height: 150,
-          top: 0,
-          borderRadius: '50%',
-          border: `1px solid ${c.ring}35`,
-        }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'linear' }}
-      >
-        <div
-          className="absolute w-2.5 h-2.5 rounded-full"
-          style={{
-            top: -5,
-            left: '50%',
-            marginLeft: -5,
-            background: c.ring,
-            boxShadow: `0 0 8px ${c.ring}`,
-          }}
-        />
-      </motion.div>
-    </div>
+    </AnimatePresence>
   );
 }
 
@@ -224,8 +139,8 @@ export function IntroScene({ younis, onNext }: IntroSceneProps) {
       </motion.div>
 
       {/* ── Three-column main layout ── */}
-      <div className="absolute inset-0 flex items-center justify-center z-10 px-4 pt-16 pb-14">
-        <div className="w-full h-full grid gap-3" style={{ gridTemplateColumns: '1fr 180px 1fr', maxWidth: 900 }}>
+      <div className="absolute inset-0 flex items-center justify-center z-10 px-2 pt-16 pb-14">
+        <div className="w-full h-full grid gap-2" style={{ gridTemplateColumns: '1fr 280px 1fr', maxWidth: 1040 }}>
 
           {/* ── LEFT PANEL ── */}
           <motion.div
@@ -331,53 +246,82 @@ export function IntroScene({ younis, onNext }: IntroSceneProps) {
 
           {/* ── CENTER PANEL: Character ── */}
           <motion.div
-            className="flex flex-col items-center justify-center gap-3"
+            className="flex flex-col items-center"
+            style={{ height: '100%', minHeight: 0 }}
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.55 }}
           >
-            <CharacterAvatar gender={selectedGender} />
+            {/* Photo fills all available vertical space */}
+            <div className="flex-1 w-full flex items-end justify-center overflow-hidden" style={{ minHeight: 0 }}>
+              <CharacterPhoto gender={selectedGender} />
+            </div>
 
-            {/* Gender Toggle */}
-            <div
-              className="flex rounded-2xl p-1 gap-1"
-              style={{
-                background: 'rgba(10,14,30,0.7)',
-                backdropFilter: 'blur(16px)',
-                border: '1px solid rgba(255,255,255,0.1)',
-              }}
-            >
-              {(['Boy', 'Girl'] as const).map((g) => {
-                const active = selectedGender === g;
-                return (
-                  <motion.button
-                    key={g}
-                    onClick={() => setSelectedGender(g)}
-                    className="relative flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-black transition-all duration-200"
-                    style={{ color: active ? '#fff' : 'rgba(255,255,255,0.4)' }}
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.97 }}
+            {/* Name + Level + Toggle anchored below feet */}
+            <div className="flex flex-col items-center gap-2 pt-2 pb-1">
+              {/* Name & level */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={selectedGender}
+                  className="flex flex-col items-center gap-0.5"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  transition={{ duration: 0.22 }}
+                >
+                  <span
+                    className="text-base font-black text-white"
+                    style={{ textShadow: `0 0 16px ${CHARACTER[selectedGender].ring}` }}
                   >
-                    {active && (
-                      <motion.div
-                        layoutId="gender-bg"
-                        className="absolute inset-0 rounded-xl"
-                        style={{
-                          background: g === 'Boy'
-                            ? 'linear-gradient(135deg, #1d4ed8, #3b82f6)'
-                            : 'linear-gradient(135deg, #be185d, #ec4899)',
-                          boxShadow: g === 'Boy'
-                            ? '0 0 14px rgba(96,165,250,0.5)'
-                            : '0 0 14px rgba(244,114,182,0.5)',
-                        }}
-                        transition={{ type: 'spring', stiffness: 380, damping: 26 }}
-                      />
-                    )}
-                    <span className="relative z-10">{g === 'Boy' ? '👦' : '👧'}</span>
-                    <span className="relative z-10">{g}</span>
-                  </motion.button>
-                );
-              })}
+                    {CHARACTER[selectedGender].name}
+                  </span>
+                  <span className="text-[9px] font-bold text-white/45 uppercase tracking-wider">
+                    Level 2 Explorer
+                  </span>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Gender Toggle */}
+              <div
+                className="flex rounded-2xl p-1 gap-1"
+                style={{
+                  background: 'rgba(10,14,30,0.7)',
+                  backdropFilter: 'blur(16px)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                }}
+              >
+                {(['Boy', 'Girl'] as const).map((g) => {
+                  const active = selectedGender === g;
+                  return (
+                    <motion.button
+                      key={g}
+                      onClick={() => setSelectedGender(g)}
+                      className="relative flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-black"
+                      style={{ color: active ? '#fff' : 'rgba(255,255,255,0.4)' }}
+                      whileHover={{ scale: 1.04 }}
+                      whileTap={{ scale: 0.97 }}
+                    >
+                      {active && (
+                        <motion.div
+                          layoutId="gender-bg"
+                          className="absolute inset-0 rounded-xl"
+                          style={{
+                            background: g === 'Boy'
+                              ? 'linear-gradient(135deg, #1d4ed8, #3b82f6)'
+                              : 'linear-gradient(135deg, #be185d, #ec4899)',
+                            boxShadow: g === 'Boy'
+                              ? '0 0 14px rgba(96,165,250,0.5)'
+                              : '0 0 14px rgba(244,114,182,0.5)',
+                          }}
+                          transition={{ type: 'spring', stiffness: 380, damping: 26 }}
+                        />
+                      )}
+                      <span className="relative z-10">{g === 'Boy' ? '👦' : '👧'}</span>
+                      <span className="relative z-10">{g}</span>
+                    </motion.button>
+                  );
+                })}
+              </div>
             </div>
           </motion.div>
 
