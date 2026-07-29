@@ -142,6 +142,7 @@ function deriveFromYounis(younis: YounisState) {
     nextChallenge,
     xpEarned,
     smartCount,
+    txns,
   };
 }
 
@@ -282,7 +283,7 @@ function txSign(tx: Transaction): string {
 // ─── Main Component ───────────────────────────────────────────────────────────
 export function ParentDashboard({ younis, onNext }: ParentDashboardProps) {
   const {
-    dreamGoalPct, coinsToGoal, isOverspender,
+    dreamGoalPct, coinsToGoal, isOverspender, txns,
     statusLabel, statusColor, statusPulse,
     skills, coachLines, nextChallenge,
     xpEarned, smartCount,
@@ -337,7 +338,7 @@ export function ParentDashboard({ younis, onNext }: ParentDashboardProps) {
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center text-base"
               style={{ background: 'linear-gradient(135deg,#fbbf24,#f97316)' }}>
-              🧒
+              {younis.gender === 'Girl' ? '👧' : '👦'}
             </div>
             <div>
               <div className="flex items-center gap-2">

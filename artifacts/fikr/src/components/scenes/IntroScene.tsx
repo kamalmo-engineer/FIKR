@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Briefcase, Stethoscope, Cog, Palette, Compass, ArrowRight } from 'lucide-react';
 import { YounisState } from '@/lib/mock-data';
+import { useYounis } from '@/context/Younis';
 
 interface IntroSceneProps {
   younis: YounisState;
@@ -58,88 +59,110 @@ function SectionLabel({ emoji, text }: { emoji: string; text: string }) {
   );
 }
 
+const CHARACTER = {
+  Boy:  { src: '/character-boy.png',  name: 'Younis', glow: 'rgba(96,165,250,',  ring: '#60a5fa', gradFrom: '#1e40af', gradTo: '#60a5fa' },
+  Girl: { src: '/character-girl.png', name: 'Laila',  glow: 'rgba(244,114,182,', ring: '#f472b6', gradFrom: '#9d174d', gradTo: '#f9a8d4' },
+} as const;
+
 function CharacterAvatar({ gender }: { gender: 'Boy' | 'Girl' }) {
+  const c = CHARACTER[gender];
   return (
-    <div className="flex flex-col items-center relative">
+    <div className="flex flex-col items-center relative" style={{ width: 160 }}>
+
       {/* Holographic platform glow */}
       <motion.div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full"
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full pointer-events-none"
         style={{
-          width: 110,
-          height: 18,
-          background: 'radial-gradient(ellipse, rgba(96,165,250,0.6) 0%, transparent 70%)',
-          filter: 'blur(4px)',
+          width: 130,
+          height: 20,
+          background: `radial-gradient(ellipse, ${c.glow}0.55) 0%, transparent 70%)`,
+          filter: 'blur(5px)',
         }}
-        animate={{ opacity: [0.6, 1, 0.6], scaleX: [1, 1.1, 1] }}
-        transition={{ duration: 2, repeat: Infinity }}
+        animate={{ opacity: [0.5, 1, 0.5], scaleX: [1, 1.12, 1] }}
+        transition={{ duration: 2.2, repeat: Infinity }}
       />
 
-      {/* Character */}
+      {/* Photo + glassmorphic frame */}
       <AnimatePresence mode="wait">
         <motion.div
           key={gender}
-          initial={{ scale: 0.85, opacity: 0, y: 8 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.85, opacity: 0, y: 8 }}
-          transition={{ type: 'spring', stiffness: 280, damping: 22 }}
           className="flex flex-col items-center"
-          style={{ marginBottom: 4 }}
+          initial={{ scale: 0.88, opacity: 0, y: 10 }}
+          animate={{ scale: 1,    opacity: 1, y: 0  }}
+          exit={{    scale: 0.88, opacity: 0, y: 10 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+          style={{ marginBottom: 6 }}
         >
-          {/* Avatar circle */}
           <motion.div
-            className="relative rounded-full flex items-center justify-center text-5xl mb-1 select-none"
+            className="relative flex items-end justify-center overflow-hidden"
             style={{
-              width: 90,
-              height: 90,
-              background: gender === 'Boy'
-                ? 'linear-gradient(135deg, #1e40af 0%, #3b82f6 60%, #60a5fa 100%)'
-                : 'linear-gradient(135deg, #9d174d 0%, #ec4899 60%, #f9a8d4 100%)',
-              boxShadow: gender === 'Boy'
-                ? '0 0 28px rgba(96,165,250,0.7), 0 0 60px rgba(96,165,250,0.3)'
-                : '0 0 28px rgba(244,114,182,0.7), 0 0 60px rgba(244,114,182,0.3)',
+              width: 130,
+              height: 158,
+              borderRadius: '50% 50% 40% 40% / 45% 45% 35% 35%',
+              background: `linear-gradient(180deg, ${c.gradFrom}55 0%, ${c.gradTo}22 100%)`,
+              border: `2px solid ${c.ring}60`,
             }}
             animate={{
-              boxShadow: gender === 'Boy'
-                ? ['0 0 24px rgba(96,165,250,0.6)', '0 0 44px rgba(96,165,250,0.9)', '0 0 24px rgba(96,165,250,0.6)']
-                : ['0 0 24px rgba(244,114,182,0.6)', '0 0 44px rgba(244,114,182,0.9)', '0 0 24px rgba(244,114,182,0.6)'],
+              boxShadow: [
+                `0 0 24px ${c.glow}0.5), 0 0 60px ${c.glow}0.18)`,
+                `0 0 44px ${c.glow}0.85), 0 0 90px ${c.glow}0.3)`,
+                `0 0 24px ${c.glow}0.5), 0 0 60px ${c.glow}0.18)`,
+              ],
             }}
-            transition={{ duration: 2.5, repeat: Infinity }}
+            transition={{ duration: 2.8, repeat: Infinity }}
           >
-            {gender === 'Boy' ? '👦' : '👧'}
+            <img
+              src={c.src}
+              alt={c.name}
+              className="w-full h-full object-cover object-top select-none"
+              draggable={false}
+            />
 
             {/* Level badge */}
             <div
-              className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-black text-white"
-              style={{ background: 'linear-gradient(135deg, #f97316, #fbbf24)' }}
+              className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-black text-white"
+              style={{
+                background: 'linear-gradient(135deg, #f97316, #fbbf24)',
+                boxShadow: '0 0 10px rgba(249,115,22,0.6)',
+              }}
             >
               Lv2
             </div>
           </motion.div>
 
           {/* Name */}
-          <div className="text-sm font-black text-white mb-0.5"
-            style={{ textShadow: '0 0 12px rgba(255,255,255,0.4)' }}>
-            {gender === 'Boy' ? 'Younis' : 'Laila'}
+          <div
+            className="text-sm font-black text-white mt-2 mb-0.5"
+            style={{ textShadow: `0 0 14px ${c.ring}` }}
+          >
+            {c.name}
           </div>
           <div className="text-[9px] font-bold text-white/45 uppercase tracking-wider">Level 2 Explorer</div>
         </motion.div>
       </AnimatePresence>
 
-      {/* Ring orbit */}
+      {/* Orbit ring */}
       <motion.div
-        className="absolute rounded-full pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
-          width: 112,
-          height: 112,
+          width: 150,
+          height: 150,
           top: 0,
-          border: '1px solid rgba(96,165,250,0.25)',
+          borderRadius: '50%',
+          border: `1px solid ${c.ring}35`,
         }}
         animate={{ rotate: 360 }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'linear' }}
       >
         <div
-          className="absolute w-2 h-2 rounded-full"
-          style={{ top: -4, left: '50%', marginLeft: -4, background: '#60a5fa' }}
+          className="absolute w-2.5 h-2.5 rounded-full"
+          style={{
+            top: -5,
+            left: '50%',
+            marginLeft: -5,
+            background: c.ring,
+            boxShadow: `0 0 8px ${c.ring}`,
+          }}
         />
       </motion.div>
     </div>
@@ -149,10 +172,20 @@ function CharacterAvatar({ gender }: { gender: 'Boy' | 'Girl' }) {
 // ── Main Component ─────────────────────────────────────────────────────────────
 
 export function IntroScene({ younis, onNext }: IntroSceneProps) {
+  const { setYounis } = useYounis();
   const [selectedAge,    setSelectedAge]    = useState('9–12');
   const [selectedDream,  setSelectedDream]  = useState('Entrepreneur');
   const [selectedGoal,   setSelectedGoal]   = useState('Buy My Dream Scooter');
   const [selectedGender, setSelectedGender] = useState<'Boy' | 'Girl'>('Boy');
+
+  const handleStart = () => {
+    setYounis(prev => ({
+      ...prev,
+      gender: selectedGender,
+      name: CHARACTER[selectedGender].name,
+    }));
+    onNext();
+  };
 
   return (
     <div className="relative w-full h-full overflow-hidden select-none">
@@ -415,7 +448,7 @@ export function IntroScene({ younis, onNext }: IntroSceneProps) {
         transition={{ delay: 0.6, duration: 0.5 }}
       >
         <motion.button
-          onClick={onNext}
+          onClick={handleStart}
           data-testid="button-begin-adventure"
           className="relative flex items-center gap-3 px-7 py-3 rounded-2xl text-white font-black text-sm overflow-hidden"
           style={{

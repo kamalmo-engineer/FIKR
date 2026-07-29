@@ -10,6 +10,7 @@ export interface Transaction {
 
 export interface YounisState {
   name: string;
+  gender: 'Boy' | 'Girl';
   level: number;
   title: string;
   coins: number;
@@ -26,6 +27,7 @@ export interface YounisState {
 
 export const initialYounisState: YounisState = {
   name: "Younis",
+  gender: "Boy",
   level: 2,
   title: "Explorer",
   coins: 980,
@@ -45,6 +47,7 @@ export const initialYounisState: YounisState = {
 
 export const updatedYounisState: YounisState = {
   name: "Younis",
+  gender: "Boy",
   level: 2,
   title: "Explorer",
   coins: 1030,
