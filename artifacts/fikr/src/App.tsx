@@ -30,12 +30,14 @@ function FikrDemo() {
 
   const handleNext = () => setCurrentScene((prev) => Math.min(prev + 1, 7));
 
-  // Map scene: clicking any hotspot advances to Street (3)
-  const handleMapClick = (_location: string) => setCurrentScene(3);
+  // Map scene: single CTA → Street (3)
+  const handleEnterStreet = () => setCurrentScene(3);
 
-  // Street scene: Toy Shop → Challenge (4)
+  // Street scene: Toy Shop → Challenge (4), Parent Center → Dashboard (6)
   const handleStreetClick = (location: string) => {
-    if (location === 'toy-shop') setCurrentScene(4);
+    if (location === 'toy-shop')      setCurrentScene(4);
+    if (location === 'parent-center') setCurrentScene(6);
+    // bank + mart handled internally by StreetScene modals
   };
 
   const handleDecision = (decision: 'buy' | 'save') => {
@@ -84,7 +86,7 @@ function FikrDemo() {
       <motion.div key={key} {...v} className="absolute inset-0">
         {currentScene === 0 && <LandingScene onNext={handleNext} />}
         {currentScene === 1 && <IntroScene younis={younisState} onNext={handleNext} />}
-        {currentScene === 2 && <MapScene younis={younisState} onLocationClick={handleMapClick} />}
+        {currentScene === 2 && <MapScene younis={younisState} onEnterStreet={handleEnterStreet} />}
         {currentScene === 3 && <StreetScene younis={younisState} onLocationClick={handleStreetClick} />}
         {currentScene === 4 && <ChallengeScene younis={younisState} onDecision={handleDecision} />}
         {currentScene === 5 && <RewardScene younis={updatedYounisState} onNext={handleNext} />}
